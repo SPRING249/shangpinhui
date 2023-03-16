@@ -1,10 +1,12 @@
 <template>
   <div>
-    我是根组件
-    <header></header>
+    <Header></Header>
     <!--路由组件出口-->
     <router-view></router-view>
-    <footer></footer>
+    <!--在主页和搜索时显示，在登陆和注册时隐藏-->
+    <!--<Footer v-show="$route.path=='/home'||$route.path=='/search'"></Footer>-->
+    <Footer v-show="$route.meta.show"></Footer>
+
   </div>
 </template>
 

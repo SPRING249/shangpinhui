@@ -28,13 +28,14 @@
     <!--头部第二行 搜索区域-->
     <div class="bottom">
       <h1 class="logoArea">
-        <router-link class="logo" to="/home">
+        <router-link class="logo" to="/search">
           <img src="./images/logo.png" alt="">
         </router-link>
       </h1>
       <div class="searchArea">
         <form action="###" class="searchForm">
-          <input type="text" id="autocomplete" class="input-error input-xxlarge" />
+          <input type="text" id="autocomplete" class="input-error input-xxlarge"
+                  v-model="keyWord"/>
           <button class="sui-btn btn-xlarge btn-danger" type="button" @click="goSearch">
             搜索</button>
         </form>
@@ -46,7 +47,24 @@
 
 <script>
 export default {
-  name: "index"
+  name: "index",
+  data(){
+    return{
+      keyWord:''
+    }
+  },
+  methods:{
+    // 搜索按钮的回调函数
+    goSearch(){
+      // this.$router.push('/search')
+      // 多次点击报错，对象传递参数
+      this.$router.push({
+        name:'search',
+        params:{keyWord:this.keyWord},
+        query:{keyWord:this.keyWord.toUpperCase()}
+      })
+    }
+  }
 }
 </script>
 
