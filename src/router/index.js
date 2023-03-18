@@ -30,13 +30,14 @@ export default new VueRouter({
     // 配置路由
     routes:[
         {
+            name:'home',
             path:'/home',
             component:Home,
             meta:{show:true}
         },
         {
-            name:"search", //使用params传递参数一定要用占位
-            path:'/search/:keyWord',
+            name:"search",
+            path:'/search',//使用params传递参数一定要用占位
             component:Search,
             meta:{show:true},
         //     路由组件传递props数据

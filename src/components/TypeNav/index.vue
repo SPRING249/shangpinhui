@@ -2,7 +2,45 @@
   <!-- 商品分类导航 -->
   <div class="type-nav">
     <div class="container">
-      <h2 class="all">全部商品分类</h2>
+      <!--事件委托-->
+      <div @mouseleave="leaveIndex">
+        <h2 class="all">全部商品分类</h2>
+        <!--三级联动-->
+        <div class="sort">
+          <div class="all-sort-list2" @click="goSearch($event)">
+            <div class="item"
+                 v-for="(c1,index) in categoryList.slice(0,16)"
+                 :key="c1.categoryId"
+                 :class="{cur:currentIndex==index}">
+              <h3 @mouseenter="changeIndex(index)" >
+                <a :data-categoryName="c1.categoryName"
+                    :data-category1Id="c1.categoryId">{{ c1.categoryName }}</a>
+              </h3>
+              <!--二三级分类显示与隐藏-->
+              <div class="item-list clearfix"
+                   :style="{display:currentIndex==index?'block':'none'}">
+                <div class="subitem"
+                     v-for="(c2,index) in c1.categoryChild"
+                     :key="c2.categoryId">
+                  <dl class="fore">
+                    <dt>
+                      <a :data-categoryName="c2.categoryName"
+                         :data-category2Id="c2.categoryId">{{c2.categoryName}}</a>
+                    </dt>
+                    <dd>
+                      <em v-for="(c3,index) in c2.categoryChild" :key="c3.categoryId">
+                        <a :data-categoryName="c2.categoryName"
+                           :data-category3Id="c3.categoryId">{{c3.categoryName}}</a>
+                      </em>
+                    </dd>
+                  </dl>
+                </div>
+              </div>
+            </div>
+
+          </div>
+        </div>
+      </div>
       <nav class="nav">
         <a href="###">服装城</a>
         <a href="###">美妆馆</a>
@@ -13,30 +51,6 @@
         <a href="###">有趣</a>
         <a href="###">秒杀</a>
       </nav>
-      <div class="sort">
-        <div class="all-sort-list2">
-          <div class="item" v-for="(c1,index) in categoryList.slice(0,16)" :key="c1.categoryId">
-            <h3>
-              <a href="">{{ c1.categoryName }}</a>
-            </h3>
-            <div class="item-list clearfix">
-              <div class="subitem" v-for="(c2,index) in c1.categoryChild" :key="c2.categoryId">
-                <dl class="fore">
-                  <dt>
-                    <a href="">{{c2.categoryName}}</a>
-                  </dt>
-                  <dd>
-                    <em v-for="(c3,index) in c2.categoryChild" :key="c3.categoryId">
-                      <a href="">{{c3.categoryName}}</a>
-                    </em>
-                  </dd>
-                </dl>
-              </div>
-            </div>
-          </div>
-
-        </div>
-      </div>
     </div>
   </div>
 
@@ -44,9 +58,15 @@
 
 <script>
 import {mapState} from "vuex";
-
+import {throttle} from "lodash";
 export default {
   name: "TypeNav",
+  data(){
+    return{
+    //   存储鼠标移到哪一个一级分类
+      currentIndex:-1,
+    }
+  },
 //   组件挂载完毕，向服务器发请求
   mounted() {
     // 没有使用命名空间
@@ -60,6 +80,51 @@ export default {
         return state.home.categoryList
       }
     })
+  },
+  methods:{
+    // 鼠标进入修改响应式数据currentIndex属性
+    // changeIndex(index){
+    //   this.currentIndex=index
+    //   // console.log(index)
+    //
+    // },
+    // 节流：在规定的时间范围内不会重复触发回调，只有大于这个时间间隔才会触发回调，把频繁触发变为少量触发
+    changeIndex:throttle(function (index) {
+      this.currentIndex=index
+    }),
+    // 一级分类鼠标移除的事件回顾
+    leaveIndex(){
+    //  鼠标移除currentIndex变为-1
+      this.currentIndex=-1
+    },
+    // 进行路由跳转的方法
+    goSearch(event){
+      // 最好的解决方案：事件委派+编程式导航
+      // 事件委派需要解决的问题：1.确定a标签  2.获取参数
+      // 1.自定义属性
+      let element=event.target
+      // 获取节点的自定义属性
+      console.log(element.dataset)
+      // 解构赋值不能有大写
+      let {categoryname,category1id,category2id,category3id}=element.dataset
+    //   区分一级二级三级分类的a标签
+    //   整理路由跳转的参数
+      if(categoryname){
+        // let location={path:'/search'}
+        const location={name:'search'}
+        let query={categoryName:categoryname}
+        if(category1id){
+          query.category1Id=category1id
+        }else if(category2id){
+          query.category2Id=category2id
+        }else {
+          query.category3Id=category3id
+        }
+        location.query=query
+      //   路由跳转
+        this.$router.push(location)
+      }
+    }
   }
 }
 </script>
@@ -111,6 +176,9 @@ export default {
 .type-nav .container .sort .all-sort-list2 .item h3 a {
   color: #333;
 }
+.type-nav .container .sort .all-sort-list2 .cur{
+  background-color: #e1251b;
+}
 .type-nav .container .sort .all-sort-list2 .item .item-list {
   display: none;
   position: absolute;
@@ -158,7 +226,7 @@ export default {
   margin-top: 5px;
   border-left: 1px solid #ccc;
 }
-.type-nav .container .sort .all-sort-list2 .item:hover .item-list {
-  display: block;
-}
+//.type-nav .container .sort .all-sort-list2 .item:hover .item-list {
+//  display: block;
+//}
 </style>
