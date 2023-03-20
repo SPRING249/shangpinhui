@@ -6,17 +6,8 @@
         <!--banner轮播-->
         <div class="swiper-container" id="mySwiper">
           <div class="swiper-wrapper">
-            <div class="swiper-slide">
-              <img src="./images/banner1.jpg" />
-            </div>
-            <div class="swiper-slide">
-              <img src="./images/banner2.jpg" />
-            </div>
-            <div class="swiper-slide">
-              <img src="./images/banner3.jpg" />
-            </div>
-            <div class="swiper-slide">
-              <img src="./images/banner4.jpg" />
+            <div class="swiper-slide" v-for="carousel in bannersList" :key="carousel.id">
+              <img :src="carousel.imgUrl" />
             </div>
           </div>
           <!-- 如果需要分页器 -->
@@ -112,8 +103,23 @@
 </template>
 
 <script>
+import {mapState} from "vuex";
+// 引入Swiper的包
+import Swiper from "swiper";
 export default {
-  name: "ListContainer"
+  name: "ListContainer",
+  // 组件加载完毕，结构已经有了
+  mounted() {
+    // 组件派发action,通过vuex发送Ajax请求，将数据存储在仓库中
+    this.$store.dispatch('home/getBannersList')  //调用仓库中的函数
+  },
+  computed:{
+    // bannersList放到组件里
+    ...mapState({
+      bannersList:state => state.home.bannersList
+    })
+    // ...mapState('home',['bannersList'])
+  }
 }
 </script>
 

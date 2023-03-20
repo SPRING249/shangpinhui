@@ -7,6 +7,10 @@ import TypeNav from "@/components/TypeNav"
 import {reqCategoryList} from "@/api";
 // 引入仓库
 import store from "@/store";
+// 引入MockServer.js ---Mock数据
+import '@/mock/mockServer'
+// 引入swiper样式
+import "swiper/css/swiper.css"
 Vue.config.productionTip = false
 // 第一个参数：全局组件的名字，第二个参数：哪一个组件
 Vue.component(TypeNav.name,TypeNav)
