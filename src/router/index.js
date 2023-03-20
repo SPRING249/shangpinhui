@@ -37,16 +37,9 @@ export default new VueRouter({
         },
         {
             name:"search",
-            path:'/search',//使用params传递参数一定要用占位
+            path:'/search/:keyWord',//使用params传递参数一定要用占位
             component:Search,
             meta:{show:true},
-        //     路由组件传递props数据
-            props($route){
-                return{
-                    keyWord:$route.params.keyWord,
-                    k:$route.query.keyWord,
-                }
-            }
         },
         {
             path:'/login',

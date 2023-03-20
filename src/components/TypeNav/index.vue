@@ -3,10 +3,13 @@
   <div class="type-nav">
     <div class="container">
       <!--事件委托-->
-      <div @mouseleave="leaveIndex">
+      <div @mouseleave="leaveIndex" @mouseenter="enterShow">
         <h2 class="all">全部商品分类</h2>
+        <!--过渡动画-->
+        <transition name="sort">
         <!--三级联动-->
-        <div class="sort">
+        <!--search页面三级联动显示与隐藏-->
+        <div class="sort" v-show="show">
           <div class="all-sort-list2" @click="goSearch($event)">
             <div class="item"
                  v-for="(c1,index) in categoryList.slice(0,16)"
@@ -40,7 +43,9 @@
 
           </div>
         </div>
+        </transition>
       </div>
+
       <nav class="nav">
         <a href="###">服装城</a>
         <a href="###">美妆馆</a>
@@ -65,12 +70,8 @@ export default {
     return{
     //   存储鼠标移到哪一个一级分类
       currentIndex:-1,
+      show:true,
     }
-  },
-//   组件挂载完毕，向服务器发请求
-  mounted() {
-    // 没有使用命名空间
-    this.$store.dispatch('home/categoryList')
   },
   computed:{
     ...mapState({
@@ -96,22 +97,21 @@ export default {
     leaveIndex(){
     //  鼠标移除currentIndex变为-1
       this.currentIndex=-1
+      if(this.$route.path != '/home'){
+        this.show=false
+      }
     },
     // 进行路由跳转的方法
     goSearch(event){
-      // 最好的解决方案：事件委派+编程式导航
-      // 事件委派需要解决的问题：1.确定a标签  2.获取参数
+      // 最好的解决方案：事件委派+编程式导航  :事件委派需要解决的问题：1.确定a标签  2.获取参数
       // 1.自定义属性
       let element=event.target
       // 获取节点的自定义属性
       console.log(element.dataset)
-      // 解构赋值不能有大写
-      let {categoryname,category1id,category2id,category3id}=element.dataset
+      let {categoryname,category1id,category2id,category3id}=element.dataset// 解构赋值不能有大写
     //   区分一级二级三级分类的a标签
-    //   整理路由跳转的参数
       if(categoryname){
-        // let location={path:'/search'}
-        const location={name:'search'}
+        const location={name:'search'}  //   整理路由跳转的参数
         let query={categoryName:categoryname}
         if(category1id){
           query.category1Id=category1id
@@ -120,11 +120,23 @@ export default {
         }else {
           query.category3Id=category3id
         }
+        // 如果路由跳转的时候带有params参数
+        if(this.$route.params){
+          location.params=this.$route.params
+        }
         location.query=query
-      //   路由跳转
+        // 路由跳转
         this.$router.push(location)
       }
-    }
+    },
+  //   展示分类
+    enterShow(){
+      if(this.$route.path!='/home'){
+        this.show=true
+      }
+
+    },
+
   }
 }
 </script>
@@ -225,6 +237,19 @@ export default {
   padding: 0 8px;
   margin-top: 5px;
   border-left: 1px solid #ccc;
+}
+//过渡动画
+//进入开始状态
+.sort-enter{
+  height: 0px !important;
+}
+//进入结束状态
+.sort-enter-to{
+  height: 460px !important;
+}
+//定义动画时间速率
+.sort-enter-active{
+  transition: all .5s linear !important;
 }
 //.type-nav .container .sort .all-sort-list2 .item:hover .item-list {
 //  display: block;

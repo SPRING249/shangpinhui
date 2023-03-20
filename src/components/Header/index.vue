@@ -28,7 +28,7 @@
     <!--头部第二行 搜索区域-->
     <div class="bottom">
       <h1 class="logoArea">
-        <router-link class="logo" to="/search">
+        <router-link class="logo" to="/home">
           <img src="./images/logo.png" alt="">
         </router-link>
       </h1>
@@ -58,11 +58,15 @@ export default {
     goSearch(){
       // this.$router.push('/search')
       // 多次点击报错，对象传递参数
-      this.$router.push({
-        name:'search',
-        params:{keyWord:this.keyWord},
-        query:{keyWord:this.keyWord.toUpperCase()}
-      })
+      if(this.$route.query){
+        let location={
+          name:'search',
+          params:{keyWord:this.keyWord||undefined},
+        }
+        location.query=this.$route.query
+        this.$router.push(location)
+      }
+
     }
   }
 }

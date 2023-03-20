@@ -28,7 +28,6 @@ export default {
     ListContainer,Recommend,Rank,Like,Floor
   },
   computed:{
-    ...mapState(['count'])
   }
 }
 </script>
