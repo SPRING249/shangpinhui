@@ -4,19 +4,7 @@
     <div class="sortList clearfix">
       <div class="center">
         <!--banner轮播-->
-        <div class="swiper-container" id="mySwiper">
-          <div class="swiper-wrapper">
-            <div class="swiper-slide" v-for="carousel in bannersList" :key="carousel.id">
-              <img :src="carousel.imgUrl" />
-            </div>
-          </div>
-          <!-- 如果需要分页器 -->
-          <div class="swiper-pagination"></div>
-
-          <!-- 如果需要导航按钮 -->
-          <div class="swiper-button-prev"></div>
-          <div class="swiper-button-next"></div>
-        </div>
+          <Carousel :list="bannersList"></Carousel>
       </div>
       <div class="right">
         <div class="news">
@@ -104,13 +92,13 @@
 
 <script>
 import {mapState} from "vuex";
-// 引入Swiper的包
-import Swiper from "swiper";
+
 export default {
   name: "ListContainer",
   // 组件加载完毕，结构已经有了
   mounted() {
     // 组件派发action,通过vuex发送Ajax请求，将数据存储在仓库中
+    // dispatch中涉及到异步语句，导致v-for遍历的时候结构还不完整
     this.$store.dispatch('home/getBannersList')  //调用仓库中的函数
   },
   computed:{
@@ -119,7 +107,38 @@ export default {
       bannersList:state => state.home.bannersList
     })
     // ...mapState('home',['bannersList'])
-  }
+  },
+  // 数据监听，监听已有数据的变化
+  watch:{
+    // 监听bannersList数据变化，右空数组变化为数组里面有四个元素
+    // bannersList:{
+    //   // 如果handler执行，代表组件实例身上这个属性值数据已经有了
+    //   handler(){
+    //   //  v-for执行完毕，才有结构。但是watch无法保证
+    //   //   在下次 DOM 更新循环结束之后执行延迟回调。在修改数据之后立即使用这个方法，获取更新后的 DOM。
+    //     // eslint-disable-next-line vue/valid-next-tick
+    //     this.$nextTick(function(){
+    //       var mySwiper = new Swiper ('.swiper-container', {
+    //         loop: true, // 循环模式选项
+    //         cssMode:true,
+    //         // 如果需要分页器
+    //         pagination: {
+    //           el: '.swiper-pagination',
+    //           clickable:true,//点击轮播图下面小球时生效
+    //         },
+    //         // 如果需要前进后退按钮
+    //         navigation: {
+    //           nextEl: '.swiper-button-next',
+    //           prevEl: '.swiper-button-prev',
+    //         },
+    //         mousewheel:true,
+    //         keyboard:true,
+    //       })
+    //     })
+    //   },
+    // }
+
+  },
 }
 </script>
 

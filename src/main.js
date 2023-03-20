@@ -11,10 +11,13 @@ import store from "@/store";
 import '@/mock/mockServer'
 // 引入swiper样式
 import "swiper/css/swiper.css"
+// 引入轮播图全局组件
+import Carousel from "@/components/Carousel/index.vue";
 Vue.config.productionTip = false
 // 第一个参数：全局组件的名字，第二个参数：哪一个组件
 Vue.component(TypeNav.name,TypeNav)
 reqCategoryList()
+Vue.component(Carousel.name,Carousel)
 new Vue({
   render: h => h(App),
   // 注册路由

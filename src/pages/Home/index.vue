@@ -6,8 +6,7 @@
   <Recommend></Recommend>
   <Rank></Rank>
   <Like></Like>
-  <Floor></Floor>
-  <Floor></Floor>
+  <Floor v-for="floor in floorsList" :key="floor.id" :list="floor"></Floor>
   <Brand></Brand>
 </div>
 </template>
@@ -27,7 +26,14 @@ export default {
     Brand,
     ListContainer,Recommend,Rank,Like,Floor
   },
+  // 复用--有两个Floor组件，不能再Floor组件内部发action
+  mounted() {
+    this.$store.dispatch('home/getFloorsList')
+  },
   computed:{
+    ...mapState({
+      floorsList:state => state.home.floorsList
+    })
   }
 }
 </script>
