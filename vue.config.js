@@ -8,7 +8,7 @@ module.exports = defineConfig({
   devServer:{
     proxy:{
       '/api':{  //遇到带有api的请求，代理服务器才会请求转发
-        target:'http://gmall-h5-api.atguigu.cn'
+        target:'https://gmall-h5-api.atguigu.cn'
       }
     }
   }

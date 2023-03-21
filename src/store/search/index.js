@@ -2,7 +2,7 @@ import {reqGetSearchInfo} from "@/api";
 //1. patch--书写自己的业务逻辑，也可以处理异步
 const actions={
 //     获取search模块数据
-    async getSearchList({commit},params){
+    async getSearchList({commit},params={}){
         // 至少传递一个参数，空对象
         // params形参：适当用户派发action的时候，第二个参数传递过来的，至少his一个空对象
         let result= await reqGetSearchInfo(params)
@@ -31,10 +31,10 @@ const getters={
         return state.searchList.goodsList || [] //假设没有网络时，返回的应该是空数组
     },
     trademarkList(state){
-        return state.searchList.trademarkList
+        return state.searchList.trademarkList ||[]
     },
     attrsList(state){
-        return state.searchList.attrsList
+        return state.searchList.attrsList||[]
     }
 }
 

@@ -1,4 +1,5 @@
 <template>
+
   <div>
     <!--三级联动-->
     <TypeNav></TypeNav>
@@ -12,11 +13,20 @@
             </li>
           </ul>
           <ul class="fl sui-tag">
-            <li class="with-x">手机</li>
-            <li class="with-x">iphone<i>×</i></li>
-            <li class="with-x">华为<i>×</i></li>
-            <li class="with-x">OPPO<i>×</i></li>
+            <!--分类的面包屑-->
+            <li class="with-x" v-if="searchParams.categoryName">
+              {{searchParams.categoryName}}
+
+          <!-- 平台的售卖属性值的展示 -->
+            <li class="with-x" v-for="(attrValue,index) in searchParams.props"
+                :key="index" v-show="attrValue">
+            {{attrValue.split(":")[1]}}
+            <i>×</i>
+
+          </li>
+
           </ul>
+
         </div>
 
         <!--selector-->
@@ -86,18 +96,6 @@
                 <li class="active">
                   <a href="#">1</a>
                 </li>
-                <li>
-                  <a href="#">2</a>
-                </li>
-                <li>
-                  <a href="#">3</a>
-                </li>
-                <li>
-                  <a href="#">4</a>
-                </li>
-                <li>
-                  <a href="#">5</a>
-                </li>
                 <li class="dotted"><span>...</span></li>
                 <li class="next">
                   <a href="#">下一页»</a>
@@ -127,41 +125,54 @@
         // 带给服务器的参数
         searchParams:{
           category1Id:"",
-          categoryName:'',
           category2Id:"",
           category3Id:"",
+          categoryName:'',
           keyword:"",
           order:"", //排序
           pageNo:1,
-          pageSize:3,
-          // 平台售卖属性操作带的参数
-          props:[],
+          pageSize:10,
+          props:[],// 平台售卖属性操作带的参数
           trademark:"", //品牌
-
         }
       }
 
     },
-    // 组件挂载完毕之前执行一次，先于mounted之前
+    //3.1.组件挂载完毕之前执行一次，【先于mounted之前】
     beforeMount() {
-    //   合并对象  -- Object.assign
-
+    //   3.2.合并对象  -- Object.assign
+      Object.assign(this.searchParams,this.query,this.params)
     },
-    // 组件挂载完毕执行一次，（仅）
+    // 组件挂载完毕执行一次，（仅执行一次）
     mounted() {
-      this.getDate()
+      //3.在发请求（getDate）之前带给服务器参数[searchParams参数发生变化有数值带给服务器]
+      this.getData()
+    },
+    computed:{
+      ...mapGetters('search',["goodsList"])
     },
     methods:{
-    //   向服务器获取search请求数据，根据不同的参数返回不同的数据展示
-    //   封装为一个函数，在需要调用时调用即可
-    //   在发请求之前带给服务器参数
-      getDate(){
+    // 1.向服务器获取search请求数据，根据不同的参数返回不同的数据展示
+    // 2. 把请求封装为一个函数，在需要调用时调用即可
+      getData(){
         this.$store.dispatch('search/getSearchList',this.searchParams)
       }
     },
-    computed:{
-      ...mapGetters('search',['goodsList','trademarkList','attrsList'])
-    },
+  //   4.数据监听
+    watch:{
+      // 监听路由信息是否发生变化
+      $routr(newValue,oldValue){
+      //   再次请求之前整理带给服务器的参数
+        Object.assign(this.searchParams,this.query,this.params)
+        // 每一次请求完毕，应该把相应的1，2，3级分类的id置空，让他接收下一次的相应1，2，3id
+        this.searchParams.category1Id = '';
+        this.searchParams.category2Id = '';
+        this.searchParams.category3Id = '';
+      //   再次请求
+        this.getData()
+
+      }
+    }
   }
 </script>
 
